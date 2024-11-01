@@ -2,185 +2,180 @@ import {
   View,
   Text,
   TextInput,
-  StyleSheet,
   TouchableHighlight,
   FlatList,
-  ScrollView,
   Image,
+  ActivityIndicator,
+  ScrollView,
 } from "react-native";
-import React from "react";
-import Icon from "@/constants/Icon"; // Pastikan jalur import sesuai dengan struktur folder Anda
+import React, { useState, useEffect } from "react";
+import Icon from "@/constants/Icon";
+import { StatusBar } from "expo-status-bar";
+
+interface Article {
+  title: string;
+  urlToImage: string;
+  source: {
+    name: string;
+  };
+}
 
 export default function Home() {
+  const [activeItem, setActiveItem] = useState(1);
+  const [berita, setBerita] = useState<Article[]>([]);
+  const [loading, setLoading] = useState(true);
+
   const kategori = [
-    { id: 1, title: "Random" },
+    { id: 1, title: "Semua" },
     { id: 2, title: "Olahraga" },
     { id: 3, title: "Politik" },
     { id: 4, title: "Teknologi" },
     { id: 5, title: "Kesehatan" },
   ];
 
-  const isiKategori = [
-    {
-      id: 1,
-      title: "Pelantikan Presiden Indonesia",
-      kategori: "Politik",
-      Image: require("../../assets/images/indonesia.png"),
-    },
-    {
-      id: 2,
-      title: "Pelantikan Presiden Indonesia",
-      kategori: "Politik",
-      Image: require("../../assets/images/indonesia.png"),
-    },
-  ];
+  const shuffleArray = (array: Article[]) => {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  };
+
+  const fetchBerita = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `https://newsapi.org/v2/top-headlines?country=us&apiKey=f1205d88be3247ef998be010b13bdbf0`
+      );
+      const data = await response.json();
+      setBerita(data.articles);
+    } catch (error) {
+      console.error("Error fetching news:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBerita();
+  }, []);
+
+  const randomArticles = shuffleArray([...berita]).slice(0, 10);
 
   return (
-    <ScrollView>
-      <View style={styles.wrapper}>
-        <Text style={styles.title}>Beranda</Text>
-        <Text style={styles.subtitle}>Discover things of this world</Text>
+    <View className="bg-white">
+      <StatusBar backgroundColor="#fff" style="dark" />
+      <View className="mt-16 mx-5">
+        <Text className="text-2xl text-neutral-700 font-semibold">
+          Jelajahi Berita Terkini
+        </Text>
+        <Text className="text-neutral-500">
+          Info Penting Langsung untuk Kamu!
+        </Text>
 
-        {/* Pencarian */}
-        <View style={styles.container}>
-          <Icon name="home" color="#888" />
+        <View className="p-3 bg-neutral-50 rounded-xl relative mt-8">
+          <View className="absolute top-4 left-3">
+            <Icon name="search" color="#e7e7e7" />
+          </View>
           <TextInput
-            style={styles.input}
+            className="left-7"
             placeholder="Cari Berita"
-            placeholderTextColor="#888"
+            placeholderTextColor="#5d5d5d"
           />
         </View>
 
-        {/* Flatlist Kategori */}
-        <View style={styles.listContainer}>
+        <View className="mt-6 mb-4">
           <FlatList
             data={kategori}
-            horizontal={true}
+            horizontal
             showsHorizontalScrollIndicator={false}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
               <TouchableHighlight
-                onPress={() => console.log(`Selected: ${item.title}`)}
-                underlayColor="#ddd"
-                style={styles.itemContainer}
+                onPress={() => setActiveItem(item.id)}
+                className={`mr-4 px-4 py-2 rounded-2xl ${
+                  activeItem === item.id ? "bg-primary" : "bg-neutral-50"
+                }`}
               >
                 <View>
                   <Text
-                    className="bg-neutral-50 p-2 rounded-lg jus"
-                    style={styles.itemText}
+                    className={`text-xs font-semibold ${
+                      activeItem === item.id
+                        ? "text-white "
+                        : "text-neutral-300"
+                    }`}
                   >
                     {item.title}
                   </Text>
                 </View>
               </TouchableHighlight>
             )}
-            ItemSeparatorComponent={() => <View style={styles.separator} />}
           />
         </View>
-
-        {/* Flatlist isi kategori */}
-        <View style={styles.wrapper}>
-          <View style={styles.listContainer}>
+        <ScrollView>
+          <View className="mt-6 mb-4">
             <FlatList
-              data={isiKategori}
-              horizontal={true}
+              data={randomArticles}
+              horizontal
               showsHorizontalScrollIndicator={false}
-              keyExtractor={(item) => item.id.toString()}
+              keyExtractor={(item, index) => index.toString()}
               renderItem={({ item }) => (
-                <TouchableHighlight
-                  onPress={() => console.log(`Selected: ${item.title}`)}
-                  underlayColor="#ddd"
-                  style={styles.itemContainer}
-                >
-                  <View style={styles.itemContent}>
-                    <Image source={item.Image} style={styles.itemImage} />
-                    <View style={styles.textOverlay}>
-                      <Text style={styles.itemTitle}>{item.title}</Text>
-                      <Text style={styles.itemCategory}>{item.kategori}</Text>
-                    </View>
-                  </View>
-                </TouchableHighlight>
+                <View className="mr-4 relative">
+                  <View className="absolute z-10 bg-black opacity-50 w-full h-full rounded-xl"></View>
+                  <Image
+                    source={{ uri: item.urlToImage }}
+                    className="w-56 h-56 rounded-xl opacity-40"
+                    resizeMode="cover"
+                  />
+                  <Text
+                    className="z-10 text-white font-bold absolute bottom-3 left-3"
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                  >
+                    {item.title}
+                  </Text>
+                </View>
               )}
-              ItemSeparatorComponent={() => <View style={styles.separator} />}
             />
           </View>
-        </View>
+
+          <View className="bg-white ">
+            <Text className="text-2xl text-neutral-700 font-semibold">
+              Berita Terkini
+            </Text>
+            {loading ? (
+              <ActivityIndicator size="large" color="#1B8C78" />
+            ) : (
+              <FlatList
+                data={berita}
+                keyExtractor={(item, index) => index.toString()}
+                showsVerticalScrollIndicator={false}
+                renderItem={({ item }) => (
+                  <View className="mt-6">
+                    <View className="flex-row items-center gap-4">
+                      <View className="w-24 h-24">
+                        <Image
+                          source={{ uri: item.urlToImage }}
+                          className="w-full h-full rounded-xl"
+                          resizeMode="cover"
+                        />
+                      </View>
+                      <View className="flex">
+                        <Text className="text-sm text-neutral-300">
+                          {item.source.name}
+                        </Text>
+                        <Text className="text-neutral-500 font-semibold">
+                          {item.title}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                )}
+              />
+            )}
+          </View>
+        </ScrollView>
       </View>
-    </ScrollView>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  wrapper: {
-    paddingHorizontal: 20,
-    backgroundColor: "#ffffff",
-    flex: 1,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "600",
-    paddingTop: 12,
-  },
-  subtitle: {
-    fontSize: 12,
-    color: "#A8A8A8",
-    paddingTop: 4,
-  },
-  container: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#f0f0f0",
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    height: 40,
-    marginTop: 10,
-  },
-  icon: {
-    marginRight: 4,
-  },
-  input: {
-    flex: 1,
-    fontSize: 16,
-  },
-  listContainer: {
-    marginTop: 8,
-  },
-  itemContainer: {
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    backgroundColor: "#ffffff",
-    borderRadius: 8,
-  },
-  itemImage: {
-    width: 250, // Atur lebar gambar
-    height: 250, // Atur tinggi gambar
-    borderRadius: 8, // Agar sudut gambar membulat
-  },
-  itemContent: {
-    position: "relative", // Untuk mengatur posisi teks di atas gambar
-  },
-  textOverlay: {
-    position: "absolute",
-    bottom: 10, // Mengatur posisi teks
-    left: 10,
-    right: 10,
-    alignItems: "center", // Untuk menengahkan teks
-  },
-  itemTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#fff", // Mengubah warna teks agar terlihat di atas gambar
-    textAlign: "center",
-  },
-  itemCategory: {
-    fontSize: 12,
-    color: "#fff", // Mengubah warna teks agar terlihat di atas gambar
-    textAlign: "center",
-  },
-  itemText: {
-    fontSize: 16,
-  },
-  separator: {
-    width: 1,
-  },
-});

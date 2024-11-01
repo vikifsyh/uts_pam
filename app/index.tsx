@@ -14,7 +14,7 @@ export default function App() {
     setTimeout(() => {
       SplashScreen.hideAsync();
       router.replace("/home");
-    }, 10000);
+    }, 3000);
   }, []);
 
   return (

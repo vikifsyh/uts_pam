@@ -3,7 +3,7 @@ import { Svg, Path, Circle, Rect } from "react-native-svg";
 import SvgImage from "react-native-svg/lib/typescript/elements/Image";
 
 interface IconProps {
-  name: "home" | "category" | "add" | "trending" | "profile";
+  name: "home" | "category" | "add" | "trending" | "profile" |"left";
 
   color?: string;
   width?: number;

@@ -1,9 +1,19 @@
 import React from "react";
-import { Svg, Path, Circle, Rect } from "react-native-svg";
+import { Svg, Path, Circle, Rect, G, Defs, ClipPath } from "react-native-svg";
 import SvgImage from "react-native-svg/lib/typescript/elements/Image";
 
 interface IconProps {
-  name: "home" | "category" | "add" | "trending" | "profile" | "search";
+  name:
+    | "home"
+    | "category"
+    | "add"
+    | "trending"
+    | "profile"
+    | "search"
+    | "retweet"
+    | "camera"
+    | "title"
+    | "camera-off";
 
   color?: string;
   width?: number;
@@ -17,6 +27,77 @@ const Icon = ({
   height = 24,
 }: IconProps) => {
   switch (name) {
+    case "camera-off":
+      return (
+        <Svg viewBox="0 0 24 24" fill="grey" width={width} height={height}>
+          <Path d="M12 9a3.75 3.75 0 1 0 0 7.5A3.75 3.75 0 0 0 12 9Z" />
+          <Path
+            fill-rule="evenodd"
+            d="M9.344 3.071a49.52 49.52 0 0 1 5.312 0c.967.052 1.83.585 2.332 1.39l.821 1.317c.24.383.645.643 1.11.71.386.054.77.113 1.152.177 1.432.239 2.429 1.493 2.429 2.909V18a3 3 0 0 1-3 3h-15a3 3 0 0 1-3-3V9.574c0-1.416.997-2.67 2.429-2.909.382-.064.766-.123 1.151-.178a1.56 1.56 0 0 0 1.11-.71l.822-1.315a2.942 2.942 0 0 1 2.332-1.39ZM6.75 12.75a5.25 5.25 0 1 1 10.5 0 5.25 5.25 0 0 1-10.5 0Zm12-1.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z"
+            clip-rule="evenodd"
+          />
+        </Svg>
+      );
+    case "title":
+      return (
+        <Svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <G clip-path="url(#clip0_7_2)">
+            <Path
+              d="M2.17969 0V6.54375H3.27188C3.27188 5.45156 3.27188 3.27188 4.36406 2.17969C5.45156 1.0875 6.54375 1.0875 7.63594 1.0875H9.81563V19.6313C9.81563 21.2672 9.27188 22.9031 7.63594 22.9031H6.56719L6.54375 23.9906H17.4516V22.8984H16.3594C14.7234 22.8984 14.1797 21.2625 14.1797 19.6266V1.09219H16.3594C17.4516 1.09219 18.5391 1.09219 19.6313 2.18438C20.7234 3.27656 20.7234 5.45625 20.7234 6.54844H21.8156V0H2.17969Z"
+              fill="#B9B9B9"
+            />
+          </G>
+          <Defs>
+            <ClipPath id="clip0_7_2">
+              <Rect width="24" height="24" fill="white" />
+            </ClipPath>
+          </Defs>
+        </Svg>
+      );
+    case "camera":
+      return (
+        <Svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <Path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M21 4.5H18.75L18 3C17.5583 2.12775 17.328 1.5 16.5 1.5H7.5C6.672 1.5 6.3975 2.2155 6 3L5.25 4.5H3C1.34325 4.5 0 5.84325 0 7.5V19.5C0 21.1568 1.34325 22.5 3 22.5H21C22.6568 22.5 24 21.1568 24 19.5V7.5C24 5.84325 22.6568 4.5 21 4.5ZM12 19.5C8.6865 19.5 6 16.8135 6 13.5C6 10.1865 8.6865 7.5 12 7.5C15.3135 7.5 18 10.1865 18 13.5C18 16.8135 15.3135 19.5 12 19.5ZM12 9C9.51525 9 7.5 11.0153 7.5 13.5C7.5 15.9847 9.51525 18 12 18C14.4847 18 16.5 15.9847 16.5 13.5C16.5 11.0153 14.4847 9 12 9Z"
+            fill="black"
+          />
+        </Svg>
+      );
+    case "retweet":
+      return (
+        <Svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+          <Path
+            d="M23.075 8.88751C24.3697 9.80805 25.3387 11.1159 25.8423 12.6226C26.3459 14.1293 26.358 15.757 25.877 17.2711C25.3959 18.7851 24.4465 20.1073 23.1657 21.0471C21.8848 21.9868 20.3386 22.4956 18.75 22.5H12.5"
+            stroke="white"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <Path
+            d="M15 25L12.5 22.5L15 20"
+            stroke="white"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <Path
+            d="M6.92499 21.1125C5.63025 20.192 4.66125 18.8841 4.15768 17.3774C3.6541 15.8707 3.64197 14.243 4.12301 12.7289C4.60406 11.2149 5.55344 9.89268 6.83431 8.95294C8.11518 8.01319 9.66136 7.50443 11.25 7.5H17.5"
+            stroke="white"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <Path
+            d="M15 5L17.5 7.5L15 10"
+            stroke="white"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </Svg>
+      );
     case "home":
       return (
         <Svg width="24" height="24" viewBox="0 0 24 24" fill="none">

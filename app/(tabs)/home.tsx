@@ -12,6 +12,10 @@ import React, { useState, useEffect } from "react";
 import Icon from "@/constants/Icon";
 import { StatusBar } from "expo-status-bar";
 
+import { authListener } from "@/services/firebase";
+import { User } from "firebase/auth";
+import { useUser } from "@/context/userContext";
+
 interface Article {
   title: string;
   urlToImage: string;
@@ -24,6 +28,22 @@ export default function Home() {
   const [activeItem, setActiveItem] = useState(1);
   const [berita, setBerita] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
+  const { user, setUser } = useUser(); // Here user can be User or null
+
+  useEffect(() => {
+    const unsubscribe = authListener((user: User | null) => {
+      if (user) {
+        // User is logged in, set user details
+        setUser(user); // setUser can accept User or null
+      } else {
+        // No user logged in, set user to null
+        setUser(null); // This is allowed as UserContext expects null
+      }
+      setLoading(false); // Stop loading once user status is determined
+    });
+
+    return () => unsubscribe(); // Cleanup the listener when component is unmounted
+  }, []);
 
   const kategori = [
     { id: 1, title: "Semua" },
@@ -66,6 +86,11 @@ export default function Home() {
     <View className="bg-white">
       <StatusBar backgroundColor="#fff" style="dark" />
       <View className="mt-16 mx-5">
+        <Text className="">Selamat Datang,</Text>
+        <Text className="mb-5 text-lg font-semibold">
+          {user ? user.email : "Guest"}
+        </Text>
+
         <Text className="text-2xl text-neutral-700 font-semibold">
           Jelajahi Berita Terkini
         </Text>
@@ -112,6 +137,7 @@ export default function Home() {
             )}
           />
         </View>
+
         <ScrollView>
           <View className="mt-6 mb-4">
             <FlatList
@@ -139,7 +165,7 @@ export default function Home() {
             />
           </View>
 
-          <View className="bg-white ">
+          <View className="bg-white">
             <Text className="text-2xl text-neutral-700 font-semibold">
               Berita Terkini
             </Text>

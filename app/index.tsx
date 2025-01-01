@@ -13,7 +13,7 @@ export default function App() {
 
     setTimeout(() => {
       SplashScreen.hideAsync();
-      router.replace("/home");
+      router.replace("/sign-in");
     }, 3000);
   }, []);
 

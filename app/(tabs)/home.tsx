@@ -160,6 +160,7 @@ export default function Home() {
                       className="z-10 text-white font-bold absolute bottom-3 left-3 "
                       numberOfLines={1}
                       ellipsizeMode="tail"
+                      testID="articleTitle" // Menambahkan testID pada title artikel
                     >
                       {item.title}
                     </Text>
@@ -189,7 +190,10 @@ export default function Home() {
                 <Text className="text-sm text-neutral-300">
                   {item.source.name}
                 </Text>
-                <Text className="text-neutral-500 font-semibold line-clamp-1">
+                <Text
+                  className="text-neutral-500 font-semibold line-clamp-1"
+                  testID="articleTitle" // Menambahkan testID pada title artikel
+                >
                   {item.title}
                 </Text>
               </View>

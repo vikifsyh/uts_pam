@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,9 +6,11 @@ import {
   TouchableOpacity,
   Image,
   Modal,
+  Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import * as LocalAuthentication from "expo-local-authentication";
 import { login } from "@/services/auth";
 
 const SignIn: React.FC = () => {
@@ -18,7 +20,16 @@ const SignIn: React.FC = () => {
   const [modalMessage, setModalMessage] = useState<string>("");
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
 
+  const [isBiometricSupported, setIsBiometricSupported] = useState(false); // Cek dukungan biometrik
   const router = useRouter();
+
+  // Cek apakah perangkat mendukung biometrik
+  useEffect(() => {
+    (async () => {
+      const isSupported = await LocalAuthentication.hasHardwareAsync();
+      setIsBiometricSupported(isSupported);
+    })();
+  }, []);
 
   const handleLogin = async () => {
     try {
@@ -33,7 +44,6 @@ const SignIn: React.FC = () => {
     } catch (error: any) {
       console.error(error);
 
-      // Validasi pesan error untuk menunjukkan penyebabnya
       if (error.message.includes("Invalid email")) {
         setModalMessage("Email yang dimasukkan salah. Silakan coba lagi.");
       } else if (error.message.includes("Invalid password")) {
@@ -52,6 +62,38 @@ const SignIn: React.FC = () => {
     setModalVisible(false);
     if (isSuccess) {
       router.replace("/home"); // Arahkan ke halaman home jika login berhasil
+    }
+  };
+
+  // Fungsi untuk login dengan biometrik
+  const handleBiometricLogin = async () => {
+    try {
+      const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+      if (!isEnrolled) {
+        return Alert.alert(
+          "Biometric Authentication",
+          "Tidak ada biometrik yang terdaftar pada perangkat ini."
+        );
+      }
+
+      const result = await LocalAuthentication.authenticateAsync({
+        promptMessage: "Login dengan Fingerprint atau Face ID",
+        fallbackLabel: "Gunakan password",
+      });
+
+      if (result.success) {
+        setModalMessage("Login berhasil dengan biometrik!");
+        setIsSuccess(true);
+        setModalVisible(true);
+        router.replace("/home"); // Arahkan ke halaman home
+      } else {
+        setModalMessage("Autentikasi biometrik gagal. Silakan coba lagi.");
+        setIsSuccess(false);
+        setModalVisible(true);
+      }
+    } catch (error) {
+      console.error("Biometric Authentication Error:", error);
+      Alert.alert("Biometric Authentication", "Terjadi kesalahan.");
     }
   };
 
@@ -91,6 +133,19 @@ const SignIn: React.FC = () => {
           Masuk Sekarang
         </Text>
       </TouchableOpacity>
+
+      {/* Tombol Biometrik */}
+      {isBiometricSupported && (
+        <TouchableOpacity
+          className="w-full p-4 bg-gray-800 rounded-xl my-4"
+          onPress={handleBiometricLogin}
+        >
+          <Text className="text-white text-center font-semibold">
+            Login dengan Sidik Jari
+          </Text>
+        </TouchableOpacity>
+      )}
+
       <View className="flex-row space-x-1">
         <Text>Belum punya akun?</Text>
         <TouchableOpacity className="" onPress={() => router.push("/sign-up")}>

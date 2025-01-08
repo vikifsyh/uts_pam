@@ -4,10 +4,11 @@ import { useRouter } from "expo-router";
 import LottieView from "lottie-react-native";
 import { StatusBar } from "expo-status-bar";
 import * as SplashScreen from "expo-splash-screen";
+import registerNNPushToken from "native-notify";
 
 export default function App() {
+  registerNNPushToken(25972, "JV3eDfixqgBHbZV4DuGIEt");
   const router = useRouter();
-
   useEffect(() => {
     SplashScreen.preventAutoHideAsync();
 

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "988802120695",
+    "project_id": "pam-uas-fc8c5",
+    "storage_bucket": "pam-uas-fc8c5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:988802120695:android:6283dbc177328929260cf2",
+        "android_client_info": {
+          "package_name": "com.anonymous.emtest"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6IGzjojA3g4uC1b9wdbv_2fHAENNx0kE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
